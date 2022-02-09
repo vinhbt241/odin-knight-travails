@@ -1,39 +1,61 @@
 POSSIBLE_MOVES = [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [-2, 1], [2, -1], [-2, -1]]
 
-def knight_moves(begin_pos, end_pos, visited = [], track = [end_pos])
-  return track.reverse() if begin_pos == end_pos
+class Node
+  attr_accessor :pos, :prev_pos
 
-  queue = [begin_pos]
+  def initialize(pos, prev_pos = nil)
+    @pos = pos
 
-  until queue.empty?
-    current_pos = queue.shift()
-    
-    visited << current_pos
-
-    POSSIBLE_MOVES.each do |move|
-      a, b = move
-      x, y = current_pos
-
-      if [x + a, y + b] == end_pos
-        track << current_pos
-
-        return knight_moves(begin_pos, current_pos, [], track)
-      else
-        queue << [x + a, y + b] if (((0..7).include?(x + a)) && ((0..7).include?(y + b)))
-      end
-    end
-
+    @prev_pos = prev_pos
   end
 end
 
 
-path =  knight_moves([0, 0], [3, 3])
 
-p path
+def knight_moves(begin_arr, end_arr)
+  begin_pos = Node.new(begin_arr)
 
-puts "You make it in #{path.length - 1} moves! Here's your path:"
+  queue = [begin_pos]
+  visited = []
+  path = []
 
-path.each { |move| p move }
+  until queue.empty? 
+    current_pos = queue.shift()
+
+    if current_pos.pos == end_arr
+      until current_pos.prev_pos == nil
+        path << current_pos.pos
+
+        current_pos = current_pos.prev_pos
+      end
+
+      path << current_pos.pos
+
+      break
+    end
+
+    visited << current_pos.pos
+
+
+    POSSIBLE_MOVES.each do |move|
+      a, b = move
+      x, y = current_pos.pos
+
+      if ((0..7).include?(x + a) && (0..7).include?(y + b)) && (visited.include?([x + a, y + b]) == false)
+        queue << Node.new([(x + a), (y + b)], current_pos)
+      end
+    end
+  end
+
+  return path.reverse()
+end
+
+
+# path = knight_moves([3, 3], [4, 3])
+
+# puts "You make it in #{path.length - 1} moves! Here's your path:"
+
+# path.each { |move| p move }
 
 
 
