@@ -1,22 +1,39 @@
-class KnightTravails
-  KNIGHT_MOVES = [[-1, -2], [-1, 2], [1, -2], [1, 2], [-2, -1], [-2, 1], [2, -1], [2, 1]]
+POSSIBLE_MOVES = [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [-2, 1], [2, -1], [-2, -1]]
 
-  attr_reader :board
+def knight_moves(begin_pos, end_pos, visited = [], track = [end_pos])
+  return track.reverse() if begin_pos == end_pos
 
-  def initialize()
-    @board = Array.new(8) { Array.new(8, 0) }
-  end
+  queue = [begin_pos]
 
-  # Build function that take one coordinate and return the travel cost from this coordinate
-  # to every single point on the board
+  until queue.empty?
+    current_pos = queue.shift()
+    
+    visited << current_pos
 
-  def knight_moves(begin_square, end_square)
+    POSSIBLE_MOVES.each do |move|
+      a, b = move
+      x, y = current_pos
+
+      if [x + a, y + b] == end_pos
+        track << current_pos
+
+        return knight_moves(begin_pos, current_pos, [], track)
+      else
+        queue << [x + a, y + b] if (((0..7).include?(x + a)) && ((0..7).include?(y + b)))
+      end
+    end
 
   end
 end
 
-game = KnightTravails.new()
 
-p game.board
+path =  knight_moves([0, 0], [3, 3])
+
+p path
+
+puts "You make it in #{path.length - 1} moves! Here's your path:"
+
+path.each { |move| p move }
+
 
 
